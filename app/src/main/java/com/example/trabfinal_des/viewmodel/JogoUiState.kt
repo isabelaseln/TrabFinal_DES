@@ -1,7 +1,7 @@
 package com.example.trabfinal_des.viewmodel
 
-import com.example.acertenumero.data.local.DesafioEntity
-import com.example.acertenumero.logic.ResultadoJogo
+import com.example.trabfinal_des.data.local.DesafioEntity
+import com.example.trabfinal_des.logic.ResultadoJogo
 
 data class JogoUiState(
 

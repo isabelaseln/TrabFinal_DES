@@ -2,11 +2,11 @@ package com.example.trabfinal_des.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.acertenumero.data.local.DesafioEntity
-import com.example.acertenumero.data.repository.DesafioRepository
-import com.example.acertenumero.logic.GameLogic
-import com.example.acertenumero.logic.ResultadoJogo
-import com.example.acertenumero.logic.ResultadoPalpite
+import com.example.trabfinal_des.data.local.DesafioEntity
+import com.example.trabfinal_des.data.repository.DesafioRepository
+import com.example.trabfinal_des.logic.GameLogic
+import com.example.trabfinal_des.logic.ResultadoJogo
+import com.example.trabfinal_des.logic.ResultadoPalpite
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

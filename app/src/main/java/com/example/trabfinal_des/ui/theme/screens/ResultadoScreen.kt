@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.acertenumero.logic.ResultadoJogo
+import com.example.trabfinal_des.logic.ResultadoJogo
 
 @Composable
 fun ResultadoScreen(
