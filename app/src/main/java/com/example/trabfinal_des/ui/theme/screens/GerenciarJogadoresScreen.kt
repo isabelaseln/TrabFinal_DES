@@ -9,8 +9,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.trabfinal_des.data.local.JogadorEntity
-import com.example.trabfinal_des.viewmodel.JogadorUiState
+import com.example.acertenumero.data.local.JogadorEntity
+import com.example.acertenumero.viewmodel.JogadorUiState
 
 @Composable
 fun GerenciarJogadoresScreen(

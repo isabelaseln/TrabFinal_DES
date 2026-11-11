@@ -2,8 +2,8 @@ package com.example.trabfinal_des.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.trabfinal_des.data.repository.DesafioRepository
-import com.example.trabfinal_des.data.repository.JogadorRepository
+import com.example.acertenumero.data.repository.DesafioRepository
+import com.example.acertenumero.data.repository.JogadorRepository
 
 class ViewModelFactory(
     private val desafioRepository: DesafioRepository,
