@@ -1,8 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-
+    id("com.google.gms.google-services")
+    alias(libs.plugins.ksp)
 }
+
 
 android {
     namespace = "com.example.trabfinal_des"
@@ -55,4 +57,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation("androidx.navigation:navigation-compose:2.8.9")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation(platform("com.google.firebase:firebase-bom:35.2.0"))
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 }

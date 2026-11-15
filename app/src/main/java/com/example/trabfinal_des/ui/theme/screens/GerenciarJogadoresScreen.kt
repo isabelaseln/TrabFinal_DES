@@ -1,13 +1,12 @@
+
 package com.example.trabfinal_des.ui.theme.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.trabfinal_des.data.local.JogadorEntity
 import com.example.trabfinal_des.viewmodel.JogadorUiState
@@ -20,7 +19,6 @@ fun GerenciarJogadoresScreen(
     onExcluir: (String) -> Unit,
     onVoltar: () -> Unit
 ) {
-
     var nome by remember { mutableStateOf("") }
     var apelido by remember { mutableStateOf("") }
 
@@ -31,21 +29,14 @@ fun GerenciarJogadoresScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF151B2B))
-            .padding(20.dp)
+            .padding(16.dp)
     ) {
-
-        TextButton(onClick = onVoltar) {
-            Text("← Voltar", color = Color.White)
-        }
-
         Text(
-            text = "Gerenciar jogadores",
-            color = Color.White,
-            style = MaterialTheme.typography.headlineSmall
+            "Gerenciar jogadores",
+            style = MaterialTheme.typography.headlineMedium
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = nome,
@@ -61,23 +52,17 @@ fun GerenciarJogadoresScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
-
         Button(
             onClick = {
+                val jogador = jogadorEditando
 
-                val existente = jogadorEditando
-
-                if (existente == null) {
-
+                if (jogador == null) {
                     onCadastrar(nome, apelido)
-
                 } else {
-
                     onAtualizar(
-                        existente.copy(
-                            nome = nome.trim(),
-                            apelido = apelido.trim()
+                        jogador.copy(
+                            nome = nome,
+                            apelido = apelido
                         )
                     )
                 }
@@ -90,65 +75,43 @@ fun GerenciarJogadoresScreen(
         ) {
             Text(
                 if (jogadorEditando == null) {
-                    "CADASTRAR JOGADOR"
+                    "Cadastrar jogador"
                 } else {
-                    "SALVAR ALTERAÇÕES"
+                    "Salvar alterações"
                 }
             )
         }
 
-        TextButton(
-            onClick = {
-                nome = ""
-                apelido = ""
-                jogadorEditando = null
-            }
-        ) {
-            Text("Limpar formulário")
+        uiState.mensagem?.let {
+            Text(it, color = MaterialTheme.colorScheme.primary)
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        uiState.erro?.let {
+            Text(it, color = MaterialTheme.colorScheme.error)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Jogadores cadastrados",
-            color = Color.White,
+            "Jogadores cadastrados",
             style = MaterialTheme.typography.titleLarge
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
-
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-
-            items(
-                items = uiState.jogadores,
-                key = { it.id }
-            ) { jogador ->
-
+            items(uiState.jogadores, key = { it.id }) { jogador ->
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFF252F45)
-                    )
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-
                     Column(
-                        modifier = Modifier.padding(14.dp)
+                        modifier = Modifier.padding(12.dp)
                     ) {
-
-                        Text(
-                            text = jogador.nome,
-                            color = Color.White
-                        )
-
-                        Text(
-                            text = "@${jogador.apelido}",
-                            color = Color.LightGray
-                        )
+                        Text(jogador.nome)
+                        Text("Apelido: ${jogador.apelido}")
 
                         Row {
-
                             TextButton(
                                 onClick = {
                                     jogadorEditando = jogador
@@ -156,24 +119,13 @@ fun GerenciarJogadoresScreen(
                                     apelido = jogador.apelido
                                 }
                             ) {
-                                Text("EDITAR")
+                                Text("Editar")
                             }
 
                             TextButton(
-                                onClick = {
-                                    onExcluir(jogador.id)
-
-                                    if (jogadorEditando?.id == jogador.id) {
-                                        jogadorEditando = null
-                                        nome = ""
-                                        apelido = ""
-                                    }
-                                }
+                                onClick = { onExcluir(jogador.id) }
                             ) {
-                                Text(
-                                    "EXCLUIR",
-                                    color = Color(0xFFFF7777)
-                                )
+                                Text("Excluir")
                             }
                         }
                     }
@@ -181,12 +133,11 @@ fun GerenciarJogadoresScreen(
             }
         }
 
-        uiState.erro?.let {
-            Text(it, color = Color(0xFFFF7777))
-        }
-
-        uiState.mensagem?.let {
-            Text(it, color = Color(0xFF81C784))
+        OutlinedButton(
+            onClick = onVoltar,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Voltar")
         }
     }
 }

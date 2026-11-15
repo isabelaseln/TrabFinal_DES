@@ -1,15 +1,14 @@
+
 package com.example.trabfinal_des.ui.theme.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.acertenumero.data.local.DesafioEntity
+import com.example.trabfinal_des.data.local.DesafioEntity
 
 @Composable
 fun DesafiosScreen(
@@ -17,85 +16,62 @@ fun DesafiosScreen(
     onSelecionar: (DesafioEntity) -> Unit,
     onVoltar: () -> Unit
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF151B2B))
-            .padding(20.dp)
+            .padding(16.dp)
     ) {
-
-        TextButton(onClick = onVoltar) {
-            Text("← Voltar", color = Color.White)
-        }
-
         Text(
-            text = "Escolha seu desafio",
-            color = Color.White,
-            style = MaterialTheme.typography.headlineSmall
+            "Escolha um desafio",
+            style = MaterialTheme.typography.headlineMedium
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (desafios.isEmpty()) {
+            Text("Não existem desafios disponíveis.")
+        }
 
-            Text(
-                text = "Nenhum desafio disponível no momento.",
-                color = Color.LightGray
-            )
-
-        } else {
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-
-                items(
-                    items = desafios,
-                    key = { it.id }
-                ) { desafio ->
-
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFF252F45)
-                        )
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(desafios, key = { it.id }) { desafio ->
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
                     ) {
+                        Text(
+                            desafio.titulo,
+                            style = MaterialTheme.typography.titleLarge
+                        )
 
-                        Column(
-                            modifier = Modifier.padding(16.dp)
+                        Text("Dificuldade: ${desafio.dificuldade}")
+
+                        Text(
+                            "Descubra um número entre ${desafio.numeroMinimo} e ${desafio.numeroMaximo}."
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Button(
+                            onClick = { onSelecionar(desafio) },
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-
-                            Text(
-                                text = desafio.titulo,
-                                color = Color.White,
-                                style = MaterialTheme.typography.titleLarge
-                            )
-
-                            Text(
-                                text = "Dificuldade: ${desafio.dificuldade}",
-                                color = Color.LightGray
-                            )
-
-                            Text(
-                                text = "Intervalo: ${desafio.numeroMinimo} até ${desafio.numeroMaximo}",
-                                color = Color.LightGray
-                            )
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            Button(
-                                onClick = {
-                                    onSelecionar(desafio)
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("JOGAR")
-                            }
+                            Text("Jogar este desafio")
                         }
                     }
                 }
             }
+        }
+
+        OutlinedButton(
+            onClick = onVoltar,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Voltar")
         }
     }
 }

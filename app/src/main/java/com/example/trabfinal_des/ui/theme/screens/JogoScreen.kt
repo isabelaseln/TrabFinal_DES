@@ -1,15 +1,10 @@
+
 package com.example.trabfinal_des.ui.theme.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.trabfinal_des.viewmodel.JogoUiState
 
@@ -21,115 +16,69 @@ fun JogoScreen(
     onVoltar: () -> Unit,
     onVerResultado: () -> Unit
 ) {
-
     val desafio = uiState.desafioSelecionado
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF151B2B))
             .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        Text(
+            desafio?.titulo ?: "Acerte o Número",
+            style = MaterialTheme.typography.headlineMedium
+        )
 
-        TextButton(onClick = onVoltar) {
-            Text("← Voltar", color = Color.White)
+        if (desafio != null) {
+            Text(
+                "${uiState.limiteMinimo} < número secreto < ${uiState.limiteMaximo}",
+                style = MaterialTheme.typography.titleLarge
+            )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(
-            text = desafio?.titulo ?: "Acerte o Número",
-            color = Color.White,
-            style = MaterialTheme.typography.headlineSmall
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = if (desafio != null) {
-                "${desafio.numeroMinimo} < número secreto < ${desafio.numeroMaximo}"
-            } else {
-                "Selecione um desafio."
-            },
-            color = Color.LightGray
-        )
-
-        Spacer(modifier = Modifier.height(35.dp))
-
-        Text(
-            text = "Qual é o seu palpite?",
-            color = Color.White,
-            style = MaterialTheme.typography.titleLarge
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
+        Text("Tentativas: ${uiState.tentativas}")
 
         OutlinedTextField(
             value = uiState.palpite,
             onValueChange = onPalpiteChange,
+            label = { Text("Digite seu palpite") },
             modifier = Modifier.fillMaxWidth(),
-            enabled = desafio != null && !uiState.partidaFinalizada,
-            label = { Text("Digite um número") },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number
-            ),
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                focusedLabelColor = Color(0xFF3978F6),
-                unfocusedLabelColor = Color.LightGray
-            )
+            enabled = !uiState.partidaFinalizada
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = onEnviarPalpite,
-            enabled = desafio != null && !uiState.partidaFinalizada,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+            enabled = !uiState.partidaFinalizada
         ) {
-            Text("TESTAR PALPITE")
+            Text("Enviar palpite")
         }
-
-        Spacer(modifier = Modifier.height(25.dp))
 
         Text(
-            text = "Tentativas: ${uiState.tentativas}",
-            color = Color.White
+            uiState.mensagem,
+            style = MaterialTheme.typography.titleMedium
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        if (uiState.mensagem.isNotBlank()) {
-
-            Text(
-                text = uiState.mensagem,
-                color = Color(0xFF64B5F6),
-                style = MaterialTheme.typography.titleMedium
-            )
+        uiState.erro?.let {
+            Text(it, color = MaterialTheme.colorScheme.error)
         }
-
-        if (uiState.erro != null) {
-
-            Text(
-                text = uiState.erro,
-                color = Color(0xFFFF7777)
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
 
         if (uiState.partidaFinalizada) {
-
             Button(
                 onClick = onVerResultado,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("VER RESULTADO")
+                Text("Ver resultado")
             }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        OutlinedButton(
+            onClick = onVoltar,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Voltar aos desafios")
         }
     }
 }

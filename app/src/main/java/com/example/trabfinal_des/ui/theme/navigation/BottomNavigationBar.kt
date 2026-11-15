@@ -1,3 +1,4 @@
+
 package com.example.trabfinal_des.ui.theme.navigation
 
 import androidx.compose.material3.*
@@ -13,15 +14,15 @@ fun BottomNavigationBar(
 
     val destinos = if (modoAdmin) {
         listOf(
-            Triple("admin", "Painel", "Painel"),
-            Triple("admin_desafios", "Desafios", "Desafios"),
-            Triple("admin_jogadores", "Jogadores", "Jogadores")
+            Pair("admin", "Painel"),
+            Pair("admin_desafios", "Desafios"),
+            Pair("admin_jogadores", "Jogadores")
         )
     } else {
         listOf(
-            Triple("inicio", "Início", "Início"),
-            Triple("selecionar_jogador", "Jogar", "Jogar"),
-            Triple("desafios", "Desafios", "Desafios")
+            Pair("inicio", "Início"),
+            Pair("selecionar_jogador", "Jogar"),
+            Pair("desafios", "Desafios")
         )
     }
 
@@ -29,25 +30,28 @@ fun BottomNavigationBar(
         containerColor = Color(0xFF202D43),
         contentColor = Color.White
     ) {
-
         destinos.forEach { destino ->
 
             NavigationBarItem(
                 selected = rotaAtual == destino.first,
+
                 onClick = {
                     if (rotaAtual != destino.first) {
                         onNavegar(destino.first)
                     }
                 },
+
                 icon = {
                     Text(
                         text = destino.second.take(1),
                         color = Color.White
                     )
                 },
+
                 label = {
-                    Text(destino.third)
+                    Text(destino.second)
                 },
+
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = Color.White,
                     selectedTextColor = Color(0xFF64B5F6),

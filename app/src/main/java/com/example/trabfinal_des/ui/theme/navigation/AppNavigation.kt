@@ -1,3 +1,4 @@
+
 package com.example.trabfinal_des.ui.theme.navigation
 
 import androidx.compose.foundation.layout.padding
@@ -9,19 +10,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.*
 import androidx.room.Room
 import com.example.trabfinal_des.data.local.AppDatabase
-import com.example.trabfinal_des.data.local.JogadorEntity
-import com.example.trabfinal_des.data.remote.DesafioRemote
 import com.example.trabfinal_des.data.repository.DesafioRepository
 import com.example.trabfinal_des.data.repository.JogadorRepository
-
-import com.example.trabfinal_des.ui.theme.navigation.BottomNavigationBar
 import com.example.trabfinal_des.ui.theme.screens.*
-
 import com.example.trabfinal_des.viewmodel.*
 
 @Composable
 fun AppNavigation() {
-
     val contexto = LocalContext.current
     val navController = rememberNavController()
 
@@ -34,41 +29,26 @@ fun AppNavigation() {
     }
 
     val desafioRepository = remember {
-        DesafioRepository(
-            database.desafioDao(),
-            DesafioRemoteService()
-        )
+        DesafioRepository(database.desafioDao())
     }
 
     val jogadorRepository = remember {
-        JogadorRepository(
-            database.jogadorDao()
-        )
+        JogadorRepository(database.jogadorDao())
     }
 
     val factory = remember {
-        ViewModelFactory(
-            desafioRepository,
-            jogadorRepository
-        )
+        ViewModelFactory(desafioRepository, jogadorRepository)
     }
 
-    val jogoViewModel: JogoViewModel =
-        viewModel(factory = factory)
+    val jogoViewModel: JogoViewModel = viewModel(factory = factory)
+    val adminViewModel: AdminViewModel = viewModel(factory = factory)
+    val jogadorViewModel: JogadorViewModel = viewModel(factory = factory)
+    val perfilViewModel: PerfilViewModel = viewModel(factory = factory)
 
-    val adminViewModel: AdminViewModel =
-        viewModel(factory = factory)
-
-    val jogadorViewModel: JogadorViewModel =
-        viewModel(factory = factory)
-
+    val perfilState by perfilViewModel.uiState.collectAsState()
     val jogoState by jogoViewModel.uiState.collectAsState()
     val adminState by adminViewModel.uiState.collectAsState()
     val jogadorState by jogadorViewModel.uiState.collectAsState()
-
-    var jogadorSelecionado by remember {
-        mutableStateOf<JogadorEntity?>(null)
-    }
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val rotaAtual = backStackEntry?.destination?.route
@@ -85,219 +65,176 @@ fun AppNavigation() {
         "desafios"
     )
 
-    val modoAdmin = rotaAtual in rotasAdmin
+    val modoAdmin = perfilState.perfilSelecionado == TipoPerfil.ADMIN
 
-    val mostrarBarra =
-        rotaAtual in rotasAdmin || rotaAtual in rotasJogador
+    val mostrarBarra = when (perfilState.perfilSelecionado) {
+        TipoPerfil.ADMIN -> rotaAtual in rotasAdmin
+        TipoPerfil.JOGADOR -> rotaAtual in rotasJogador
+        null -> false
+    }
+
 
     Scaffold(
         bottomBar = {
-
             if (mostrarBarra) {
-
                 BottomNavigationBar(
                     rotaAtual = rotaAtual,
                     modoAdmin = modoAdmin,
                     onNavegar = { destino ->
-
                         navController.navigate(destino) {
                             launchSingleTop = true
                         }
                     }
                 )
             }
-        }
-    ) { padding ->
+        },
+        content = { padding ->
 
-        NavHost(
-            navController = navController,
-            startDestination = "inicio",
-            modifier = Modifier.padding(padding)
-        ) {
+            NavHost(
+                navController = navController,
+                startDestination = "inicio",
+                modifier = Modifier.padding(padding)
+            ) {
 
-            composable("inicio") {
-
-                InicioScreen(
-                    onJogadorClick = {
-                        navController.navigate("selecionar_jogador")
-                    },
-                    onAdminClick = {
-                        navController.navigate("admin")
-                    }
-                )
-            }
-
-            composable("selecionar_jogador") {
-
-                SelecionarJogadorScreen(
-                    jogadores = jogadorState.jogadores,
-
-                    onSelecionar = { jogador ->
-
-                        jogadorSelecionado = jogador
-
-                        navController.navigate("desafios")
-                    },
-
-                    onVoltar = {
-                        navController.popBackStack()
-                    },
-
-                    onGerenciarJogadores = {
-                        navController.navigate("admin_jogadores")
-                    }
-                )
-            }
-
-            composable("desafios") {
-
-                DesafiosScreen(
-                    desafios = jogoState.desafios,
-
-                    onSelecionar = { desafio ->
-
-                        jogoViewModel.iniciarPartida(desafio)
-
-                        navController.navigate("jogo")
-                    },
-
-                    onVoltar = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-
-            composable("jogo") {
-
-                JogoScreen(
-                    uiState = jogoState,
-
-                    onPalpiteChange = {
-                        jogoViewModel.atualizarPalpite(it)
-                    },
-
-                    onEnviarPalpite = {
-                        jogoViewModel.enviarPalpite()
-                    },
-
-                    onVoltar = {
-                        jogoViewModel.limparPartida()
-                        navController.popBackStack()
-                    },
-
-                    onVerResultado = {
-                        navController.navigate("resultado")
-                    }
-                )
-            }
-
-            composable("resultado") {
-
-                ResultadoScreen(
-                    resultado = jogoState.resultado,
-
-                    onVoltarDesafios = {
-                        jogoViewModel.limparPartida()
-
-                        navController.navigate("desafios") {
-                            popUpTo("desafios") {
-                                inclusive = false
-                            }
-                            launchSingleTop = true
+                composable("inicio") { _ ->
+                    InicioScreen(
+                        onJogadorClick = {
+                            perfilViewModel.selecionarPerfil(TipoPerfil.JOGADOR)
+                            navController.navigate("selecionar_jogador")
+                        },
+                        onAdminClick = {
+                            perfilViewModel.selecionarPerfil(TipoPerfil.ADMIN)
+                            navController.navigate("admin")
                         }
-                    },
+                    )
+                }
 
-                    onVoltarInicio = {
-                        jogoViewModel.limparPartida()
-
-                        navController.navigate("inicio") {
-                            popUpTo("inicio") {
-                                inclusive = false
-                            }
-                            launchSingleTop = true
+                composable("selecionar_jogador") { _ ->
+                    SelecionarJogadorScreen(
+                        jogadores = jogadorState.jogadores,
+                        onSelecionar = {
+                            navController.navigate("desafios")
+                        },
+                        onVoltar = {
+                            perfilViewModel.limparPerfil()
+                            navController.popBackStack()
                         }
-                    }
-                )
-            }
+                    )
+                }
 
-            composable("admin") {
+                composable("desafios") { _ ->
+                    DesafiosScreen(
+                        desafios = jogoState.desafios,
+                        onSelecionar = { desafio ->
+                            jogoViewModel.iniciarPartida(desafio)
+                            navController.navigate("jogo")
+                        },
+                        onVoltar = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
 
-                AdminScreen(
-                    uiState = adminState,
+                composable("jogo") { _ ->
+                    JogoScreen(
+                        uiState = jogoState,
+                        onPalpiteChange = {
+                            jogoViewModel.atualizarPalpite(it)
+                        },
+                        onEnviarPalpite = {
+                            jogoViewModel.enviarPalpite()
+                        },
+                        onVoltar = {
+                            jogoViewModel.limparPartida()
+                            navController.popBackStack()
+                        },
+                        onVerResultado = {
+                            navController.navigate("resultado")
+                        }
+                    )
+                }
 
-                    onGerenciarDesafios = {
-                        navController.navigate("admin_desafios")
-                    },
+                composable("resultado") { _ ->
+                    ResultadoScreen(
+                        resultado = jogoState.resultado,
+                        onVoltarDesafios = {
+                            jogoViewModel.limparPartida()
+                            navController.navigate("desafios") {
+                                popUpTo("desafios") {
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                            }
+                        },
+                        onVoltarInicio = {
+                            jogoViewModel.limparPartida()
+                            perfilViewModel.limparPerfil()
+                            navController.navigate("inicio") {
+                                popUpTo("inicio") {
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
 
-                    onGerenciarJogadores = {
-                        navController.navigate("admin_jogadores")
-                    },
+                composable("admin") { _ ->
+                    AdminScreen(
+                        uiState = adminState,
+                        onSincronizar = {
+                            adminViewModel.sincronizarDesafios()
+                        },
+                        onVoltar = {
+                            perfilViewModel.limparPerfil()
+                            navController.popBackStack()
+                        }
+                    )
+                }
 
-                    onSincronizar = {
-                        adminViewModel.sincronizarDesafios()
-                    },
+                composable("admin_desafios") { _ ->
+                    GerenciarDesafiosScreen(
+                        uiState = adminState,
+                        onCadastrar = { titulo, minimo, maximo, secreto, dificuldade ->
+                            adminViewModel.cadastrarDesafio(
+                                titulo,
+                                minimo,
+                                maximo,
+                                secreto,
+                                dificuldade
+                            )
+                        },
+                        onAtualizar = { desafio ->
+                            adminViewModel.atualizarDesafio(desafio)
+                        },
+                        onExcluir = { id ->
+                            adminViewModel.excluirDesafio(id)
+                        },
+                        onVoltar = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
 
-                    onVoltar = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-
-            composable("admin_desafios") {
-
-                GerenciarDesafiosScreen(
-                    uiState = adminState,
-
-                    onCadastrar = { titulo, minimo, maximo, secreto, dificuldade ->
-
-                        adminViewModel.cadastrarDesafio(
-                            titulo,
-                            minimo,
-                            maximo,
-                            secreto,
-                            dificuldade
-                        )
-                    },
-
-                    onAtualizar = { desafio ->
-                        adminViewModel.atualizarDesafio(desafio)
-                    },
-
-                    onExcluir = { id ->
-                        adminViewModel.excluirDesafio(id)
-                    },
-
-                    onVoltar = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-
-            composable("admin_jogadores") {
-
-                GerenciarJogadoresScreen(
-                    uiState = jogadorState,
-
-                    onCadastrar = { nome, apelido ->
-                        jogadorViewModel.cadastrarJogador(
-                            nome,
-                            apelido
-                        )
-                    },
-
-                    onAtualizar = { jogador ->
-                        jogadorViewModel.atualizarJogador(jogador)
-                    },
-
-                    onExcluir = { id ->
-                        jogadorViewModel.excluirJogador(id)
-                    },
-
-                    onVoltar = {
-                        navController.popBackStack()
-                    }
-                )
+                composable("admin_jogadores") { _ ->
+                    GerenciarJogadoresScreen(
+                        uiState = jogadorState,
+                        onCadastrar = { nome, apelido ->
+                            jogadorViewModel.cadastrarJogador(nome, apelido)
+                        },
+                        onAtualizar = { jogador ->
+                            jogadorViewModel.atualizarJogador(jogador)
+                        },
+                        onExcluir = { id ->
+                            jogadorViewModel.excluirJogador(id)
+                        },
+                        onVoltar = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
             }
         }
-    }
+    )
+
 }

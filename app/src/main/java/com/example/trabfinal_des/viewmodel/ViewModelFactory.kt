@@ -15,6 +15,7 @@ class ViewModelFactory(
         modelClass: Class<T>
     ): T {
 
+
         return when {
 
             modelClass.isAssignableFrom(JogoViewModel::class.java) ->
@@ -26,9 +27,13 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(JogadorViewModel::class.java) ->
                 JogadorViewModel(jogadorRepository) as T
 
+            modelClass.isAssignableFrom(PerfilViewModel::class.java) ->
+                PerfilViewModel() as T
+
             else -> throw IllegalArgumentException(
                 "ViewModel desconhecido: ${modelClass.name}"
             )
         }
+
     }
 }

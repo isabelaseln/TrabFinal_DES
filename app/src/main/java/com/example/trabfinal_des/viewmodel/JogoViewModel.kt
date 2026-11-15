@@ -1,3 +1,4 @@
+
 package com.example.trabfinal_des.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -30,14 +31,12 @@ class JogoViewModel(
 
     private fun observarDesafios() {
         viewModelScope.launch {
-
             repository.desafios
                 .map { lista ->
                     lista.filter { it.ativo }
                         .sortedBy { it.titulo }
                 }
                 .collect { desafios ->
-
                     _uiState.update {
                         it.copy(desafios = desafios)
                     }
@@ -46,10 +45,11 @@ class JogoViewModel(
     }
 
     fun iniciarPartida(desafio: DesafioEntity) {
-
         _uiState.update {
             it.copy(
                 desafioSelecionado = desafio,
+                limiteMinimo = desafio.numeroMinimo,
+                limiteMaximo = desafio.numeroMaximo,
                 palpite = "",
                 tentativas = 0,
                 mensagem = "Tente descobrir o número secreto!",
@@ -61,14 +61,15 @@ class JogoViewModel(
     }
 
     fun atualizarPalpite(valor: String) {
-
         _uiState.update {
-            it.copy(palpite = valor, erro = null)
+            it.copy(
+                palpite = valor,
+                erro = null
+            )
         }
     }
 
     fun enviarPalpite() {
-
         val estado = _uiState.value
         val desafio = estado.desafioSelecionado
 
@@ -93,8 +94,8 @@ class JogoViewModel(
         val resposta = gameLogic.avaliarPalpite(
             palpite = palpite,
             numeroSecreto = desafio.numeroSecreto,
-            numeroMinimo = desafio.numeroMinimo,
-            numeroMaximo = desafio.numeroMaximo
+            numeroMinimo = estado.limiteMinimo,
+            numeroMaximo = estado.limiteMaximo
         )
 
         if (resposta == ResultadoPalpite.FORA_DO_INTERVALO) {
@@ -113,6 +114,7 @@ class JogoViewModel(
             ResultadoPalpite.MAIOR -> {
                 _uiState.update {
                     it.copy(
+                        limiteMinimo = palpite,
                         tentativas = novasTentativas,
                         mensagem = "O número secreto é MAIOR!",
                         palpite = "",
@@ -124,6 +126,7 @@ class JogoViewModel(
             ResultadoPalpite.MENOR -> {
                 _uiState.update {
                     it.copy(
+                        limiteMaximo = palpite,
                         tentativas = novasTentativas,
                         mensagem = "O número secreto é MENOR!",
                         palpite = "",
@@ -133,7 +136,6 @@ class JogoViewModel(
             }
 
             ResultadoPalpite.ACERTOU -> {
-
                 val resultado = ResultadoJogo(
                     numeroSecreto = desafio.numeroSecreto,
                     tentativas = novasTentativas,
@@ -160,6 +162,8 @@ class JogoViewModel(
         _uiState.update {
             it.copy(
                 desafioSelecionado = null,
+                limiteMinimo = 0,
+                limiteMaximo = 0,
                 palpite = "",
                 tentativas = 0,
                 mensagem = "",
