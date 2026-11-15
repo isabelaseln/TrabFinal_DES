@@ -4,26 +4,25 @@ package com.example.trabfinal_des.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 
 private val AppColorScheme = darkColorScheme(
-    primary = CinzaBotao,
-    onPrimary = TextoEscuro,
+    primary = AzulVivo,
+    onPrimary = BrancoTexto,
 
-    secondary = CinzaClaro,
+    secondary = Verde,
     onSecondary = TextoEscuro,
 
-    tertiary = CinzaBotao,
+    tertiary = Amarelo,
     onTertiary = TextoEscuro,
 
     background = AzulFundo,
     onBackground = BrancoTexto,
 
-    surface = AzulFundo,
+    surface = AzulCard,
     onSurface = BrancoTexto,
 
-    surfaceVariant = Color(0xFF294B68),
-    onSurfaceVariant = BrancoTexto
+    surfaceVariant = AzulFundo,
+    onSurfaceVariant = CinzaTexto
 )
 
 @Composable

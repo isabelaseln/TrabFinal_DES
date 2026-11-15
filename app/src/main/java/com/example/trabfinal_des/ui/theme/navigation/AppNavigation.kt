@@ -73,7 +73,6 @@ fun AppNavigation() {
         null -> false
     }
 
-
     Scaffold(
         bottomBar = {
             if (mostrarBarra) {
@@ -89,14 +88,12 @@ fun AppNavigation() {
             }
         },
         content = { padding ->
-
             NavHost(
                 navController = navController,
                 startDestination = "inicio",
                 modifier = Modifier.padding(padding)
             ) {
-
-                composable("inicio") { _ ->
+                composable("inicio") {
                     InicioScreen(
                         onJogadorClick = {
                             perfilViewModel.selecionarPerfil(TipoPerfil.JOGADOR)
@@ -109,10 +106,11 @@ fun AppNavigation() {
                     )
                 }
 
-                composable("selecionar_jogador") { _ ->
+                composable("selecionar_jogador") {
                     SelecionarJogadorScreen(
                         jogadores = jogadorState.jogadores,
-                        onSelecionar = {
+                        onSelecionar = { jogador ->
+                            perfilViewModel.selecionarJogador(jogador)
                             navController.navigate("desafios")
                         },
                         onVoltar = {
@@ -122,7 +120,7 @@ fun AppNavigation() {
                     )
                 }
 
-                composable("desafios") { _ ->
+                composable("desafios") {
                     DesafiosScreen(
                         desafios = jogoState.desafios,
                         onSelecionar = { desafio ->
@@ -135,7 +133,7 @@ fun AppNavigation() {
                     )
                 }
 
-                composable("jogo") { _ ->
+                composable("jogo") {
                     JogoScreen(
                         uiState = jogoState,
                         onPalpiteChange = {
@@ -154,7 +152,7 @@ fun AppNavigation() {
                     )
                 }
 
-                composable("resultado") { _ ->
+                composable("resultado") {
                     ResultadoScreen(
                         resultado = jogoState.resultado,
                         onVoltarDesafios = {
@@ -179,7 +177,7 @@ fun AppNavigation() {
                     )
                 }
 
-                composable("admin") { _ ->
+                composable("admin") {
                     AdminScreen(
                         uiState = adminState,
                         onSincronizar = {
@@ -192,7 +190,7 @@ fun AppNavigation() {
                     )
                 }
 
-                composable("admin_desafios") { _ ->
+                composable("admin_desafios") {
                     GerenciarDesafiosScreen(
                         uiState = adminState,
                         onCadastrar = { titulo, minimo, maximo, secreto, dificuldade ->
@@ -216,7 +214,7 @@ fun AppNavigation() {
                     )
                 }
 
-                composable("admin_jogadores") { _ ->
+                composable("admin_jogadores") {
                     GerenciarJogadoresScreen(
                         uiState = jogadorState,
                         onCadastrar = { nome, apelido ->
@@ -236,5 +234,4 @@ fun AppNavigation() {
             }
         }
     )
-
 }
