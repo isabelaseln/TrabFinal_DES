@@ -48,6 +48,7 @@ fun GerenciarDesafiosScreen(
     val verde = Color(0xFF20C997)
     val amarelo = Color(0xFFFFC857)
     val coral = Color(0xFFFF6B6B)
+    val roxo = Color(0xFFB388FF)
     val branco = Color.White
     val cinza = Color(0xFFB8C7D9)
 
@@ -56,7 +57,9 @@ fun GerenciarDesafiosScreen(
     var maximo by remember { mutableStateOf("100") }
     var secreto by remember { mutableStateOf("84") }
     var dificuldade by remember { mutableStateOf("Fácil") }
-    var desafioEditando by remember { mutableStateOf<DesafioEntity?>(null) }
+    var desafioEditando by remember {
+        mutableStateOf<DesafioEntity?>(null)
+    }
 
     fun limparFormulario() {
         titulo = ""
@@ -156,11 +159,20 @@ fun GerenciarDesafiosScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        listOf("Fácil", "Médio", "Difícil").forEach { opcao ->
+                        listOf(
+                            "Fácil",
+                            "Médio",
+                            "Difícil",
+                            "Extremo"
+                        ).forEach { opcao ->
                             FilterChip(
                                 selected = dificuldade == opcao,
-                                onClick = { dificuldade = opcao },
-                                label = { Text(opcao) }
+                                onClick = {
+                                    dificuldade = opcao
+                                },
+                                label = {
+                                    Text(opcao)
+                                }
                             )
                         }
                     }
@@ -217,7 +229,9 @@ fun GerenciarDesafiosScreen(
 
                     if (desafioEditando != null) {
                         OutlinedButton(
-                            onClick = { limparFormulario() },
+                            onClick = {
+                                limparFormulario()
+                            },
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text("Cancelar edição")
@@ -279,6 +293,7 @@ fun GerenciarDesafiosScreen(
                 "FACIL" -> verde
                 "MEDIO" -> amarelo
                 "DIFICIL" -> coral
+                "EXTREMO" -> roxo
                 else -> azulVivo
             }
 
