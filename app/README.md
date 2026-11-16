@@ -135,8 +135,6 @@ A estrutura principal do projeto está organizada da seguinte forma:
 
 Link Canva:  **https://canva.link/n95mxrxhhex0spx**
 
-Link Figma: **https://www.figma.com/design/605aH9wrcme2rkS9IpuJMo/DES-APP?node-id=0-1&p=f&t=d5JPXUveW8FrZ9NJ-0**
-
 Equipe:
 - Gabriela Selbmann Nascimento
 - Isabela Selbmann Nascimento
